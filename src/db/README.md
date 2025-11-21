@@ -10,4 +10,8 @@ psql DATABASE_URL -f file.sql
 
 # Pre-defined Node.js scripts
 
-Some actions already have pre-defined Node.js scripts. For example, `generateAssignments.js` to randomly generate assignments each year.
+Some actions already have pre-defined Node.js scripts. For example, `generateAssignments.js` to randomly generate assignments each year. This script can (and should) be run using the `npm` script:
+
+```bash
+npm run generate
+```
