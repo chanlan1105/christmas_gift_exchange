@@ -1,13 +1,24 @@
 import { Cousin, cousins, exclusion } from "@/lib/cousins";
-import { readFile } from "fs/promises";
 import postgres from "postgres";
+import "dotenv/config";
 
-const sql = postgres(process.env.DATABASE_URL!, { ssl: "require" });
+import { createInterface } from "readline/promises";
+const readline = createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 async function createAssignmentsTable() {
-    await readFile("./generateAssignments.sql", { encoding: "utf-8" }).then(query => {
-        sql(query);
-    });
+    await sql`CREATE TABLE IF NOT EXISTS Assignments (
+        id SERIAL PRIMARY KEY,
+        "year" INTEGER,
+        person VARCHAR(127),
+        assignedto VARCHAR(127)
+    );`;
+
+    return;
 }
 
 /**
@@ -80,4 +91,45 @@ function generateAssignments(n: number): Record<Cousin, Cousin[]> {
     return assignments;
 }
 
-console.log(generateAssignments(3));
+/** 
+ * Writes `n` assignments to the SQL server.
+ */
+async function writeAssignments(n: number) {
+    const assignments = generateAssignments(n);
+
+    // Check if records already exist for this year.
+    const YEAR = new Date().getFullYear();
+    const records = await sql`
+        SELECT COUNT(id) FROM Assignments WHERE "year"=${YEAR} 
+    `;
+    const count = parseInt(records[0].count, 10);
+
+    if (count) {
+        // Records already exist.
+        const answer = await readline.question(`Assignments already exist for year ${YEAR}. Overwrite? [y/n] `);
+
+        if (!["y", "yes"].includes(answer.toLowerCase()))
+            return false;
+
+        // Delete existing records
+        await sql`DELETE FROM Assignments WHERE "year"=${YEAR}`;
+    }
+
+    const sqlAssignments = Object.entries(assignments).flatMap(([gifter, list]) => {
+        return list.map(person => ({
+            year: YEAR,
+            assignedto: gifter,
+            person
+        }));
+    });
+
+    await sql`INSERT INTO Assignments ${ sql(sqlAssignments, "year", "assignedto", "person") }`;
+
+    return true;
+}
+
+await createAssignmentsTable();
+writeAssignments(2).then(res => {
+    res && console.log("Done!");
+    process.exit(0);
+});
