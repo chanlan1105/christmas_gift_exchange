@@ -1,27 +1,22 @@
-import PageContext from "@/context/PageContext";
-import { useCallback, useContext } from "react";
-import PersonCard from "./PersonCard";
-import { Alert } from "flowbite-react";
-import { BsExclamationTriangleFill } from "react-icons/bs";
+import { cookies } from "next/headers";
+import LogoutAlert from "./LogoutAlert";
+import Assignments from "./Assignments";
+import ErrorAlert from "../ErrorAlert/ErrorAlert";
 
-export default function SplashPage() {
-    const contextValues = useContext(PageContext);
-    if (!contextValues) return;
-    const { loggedIn, setLoggedIn } = contextValues;
+export default async function SplashPage() {
+    const loggedIn = (await cookies()).get("user")?.value;
 
-    const logout = useCallback(() => {
-        setLoggedIn(null);
-    }, []);
+    if (!loggedIn) {
+        return <ErrorAlert errorCode="ERR_SPLASH_PG_USR" />;
+    }
 
     return <>
-        <Alert color="warning" rounded icon={BsExclamationTriangleFill} className="font-medium">
-            Not {loggedIn}? <span className="font-medium cursor-pointer underline" onClick={logout}>Click to switch users</span>
-        </Alert>
+        <LogoutAlert loggedIn={loggedIn} />
 
-        <h1 className="text-2xl font-bold my-4">Hi {loggedIn}!</h1>
+        <h1 className="text-2xl font-bold mt-8 mb-4">Hi {loggedIn}!</h1>
 
         <h2 className="text-xl my-4">This year, you're gifting to:</h2>
 
-        <PersonCard name="Ashley" assignees={["Lucas", "Vanessa"]} />
+        <Assignments />
     </>;
 }

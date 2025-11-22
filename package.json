@@ -10,6 +10,7 @@
     "generate": "tsx src/db/generateAssignments.mts"
   },
   "dependencies": {
+    "cookie": "^1.0.2",
     "flowbite-react": "^0.12.10",
     "next": "16.0.3",
     "postgres": "^3.4.7",

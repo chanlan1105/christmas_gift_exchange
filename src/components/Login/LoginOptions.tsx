@@ -1,20 +1,26 @@
 'use client';
 
-import PageContext from "@/context/PageContext";
 import { Cousin, cousins, isCousin } from "@/lib/cousins";
 import { Button, Select } from "flowbite-react";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 
 export default function LoginOptions() {
     const [selected, setSelected] = useState<Cousin | null>(null);
 
-    const contextValues = useContext(PageContext);
-    if (!contextValues) return;
-    const { setLoggedIn } = contextValues;
-
     const login = useCallback(() => {
-        setLoggedIn(selected);
+        fetch("/api/login", {
+            method: "POST",
+            body: JSON.stringify({ name: selected }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(res => {
+            if (res.ok)
+                window.location.reload();
+            else
+                alert("There was an error logging you in. Please contact me. Error code: ERR_LOGIN");
+        });
     }, [selected]);
 
     return <>
