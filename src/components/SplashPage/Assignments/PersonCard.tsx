@@ -1,7 +1,7 @@
 import { Cousin } from "@/lib/cousins";
 import { Card } from "flowbite-react";
 import { cookies } from "next/headers";
-import ErrorAlert from "../ErrorAlert/ErrorAlert";
+import ErrorAlert from "../../ErrorAlert/ErrorAlert";
 
 export default async function PersonCard({ name, assignees }: { name: Cousin, assignees: Cousin[] }) {
     const loggedIn = (await cookies()).get("user")?.value;

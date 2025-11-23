@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import LogoutAlert from "./LogoutAlert";
-import Assignments from "./Assignments";
+import Assignments from "./Assignments/Assignments";
 import ErrorAlert from "../ErrorAlert/ErrorAlert";
+import Wishlist from "./Wishlist/Wishlist";
 
 export default async function SplashPage() {
     const loggedIn = (await cookies()).get("user")?.value;
@@ -18,5 +19,7 @@ export default async function SplashPage() {
         <h2 className="text-xl my-4">This year, you're gifting to:</h2>
 
         <Assignments />
+
+        <Wishlist />
     </>;
 }

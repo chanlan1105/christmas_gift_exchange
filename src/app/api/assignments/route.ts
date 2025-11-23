@@ -1,7 +1,5 @@
+import { sql } from "@/lib/db";
 import { NextRequest } from "next/server";
-import postgres from "postgres";
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 export async function POST(req: NextRequest) {
     const user = req.cookies.get("user")?.value;

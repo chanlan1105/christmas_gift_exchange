@@ -1,0 +1,115 @@
+"use client";
+
+import { Button, Label, Modal, ModalBody, Spinner, Textarea, TextInput } from "flowbite-react";
+import { Dispatch, FormEvent, SetStateAction, useCallback, useState } from "react";
+
+export default function AddItemModal({ show, setShow }: { show: boolean, setShow: Dispatch<SetStateAction<boolean>> }) {
+    const [links, setLinks] = useState<string[]>([""]);
+    const [submitting, setSubmitting] = useState(false);
+
+    const setLink = useCallback((link: string, index: number) => {
+        setLinks(prevLinks => {
+            // Update state value of current link
+            const newLinks = [...prevLinks];
+            newLinks[index] = link;
+
+            // If link array is full, ensure there is an empty box at the end
+            if (newLinks[newLinks.length - 1] != "") 
+                newLinks.push("");
+
+            return newLinks;
+        });
+    }, []);
+
+    const deleteLink = useCallback((index: number) => {
+        setLinks(prevLinks => {
+            const newLinks = [...prevLinks];
+            newLinks.splice(index, 1);
+            return newLinks;
+        });
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setShow(false);
+        setLinks([""]);
+    }, []);
+
+    const submitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        setSubmitting(true);
+        const formData = new FormData(e.currentTarget);
+
+        const res = await fetch("/api/wishlist/add_item", {
+            method: "POST",
+            body: formData
+        });
+
+        if (res.ok)
+            closeModal();
+        else 
+            alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD");
+
+        setSubmitting(false);
+    }, []);
+
+    return <Modal show={show} size="md" className="font-sans">
+        <ModalBody>
+            <h3 className="text-xl font-medium mb-4">Add an item to your wishlist</h3>
+            <form className="space-y-6" action="/api/wishlist/add_item" method="POST" onSubmit={e => submitForm(e)} autoComplete="off">
+                <div>
+                    <div className="mb-2">
+                        <Label htmlFor="wishlist-add-item">Item</Label>
+                    </div>
+                    <TextInput
+                        id="wishlist-add-item"
+                        name="item"
+                        readOnly={submitting}
+                        required
+                    />
+                </div>
+
+                <div>
+                    <div className="mb-2">
+                        <Label>Link(s)</Label>
+                    </div>
+
+                    <div className="space-y-2">
+                        {
+                            links.map((link, index) =>
+                                <TextInput
+                                    key={index}
+                                    value={link}
+                                    onChange={e => setLink(e.target.value, index)}
+                                    onBlur={e => {
+                                        if (e.target.value == "" && index != links.length - 1)
+                                            deleteLink(index);
+                                    }}
+                                    readOnly={submitting}
+                                    name="links[]"
+                                />
+                            )
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <div className="mb-2">
+                        <Label htmlFor="wishlist-add-comment">Extra comment (optional)</Label>
+                    </div>
+                    <Textarea id="wishlist-add-comment" className="min-h-20" name="desc" readOnly={submitting} />
+                </div>
+                
+                <div className="flex gap-2">
+                    <Button type="button" color="alternative" onClick={closeModal} disabled={submitting}>Cancel</Button>
+                    <Button type="submit" color="green" disabled={submitting}>
+                        Add 
+                        {
+                            submitting ? <Spinner size="sm" className="ml-2" /> : <></>
+                        }
+                    </Button>
+                </div>
+            </form>
+        </ModalBody>
+    </Modal>;
+}

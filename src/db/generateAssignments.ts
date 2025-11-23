@@ -1,5 +1,5 @@
 import { Cousin, cousins, exclusion } from "@/lib/cousins";
-import postgres from "postgres";
+import { sql } from "@/lib/db";
 import "dotenv/config";
 
 import { createInterface } from "readline/promises";
@@ -7,8 +7,6 @@ const readline = createInterface({
     input: process.stdin,
     output: process.stdout
 });
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 async function createAssignmentsTable() {
     await sql`CREATE TABLE IF NOT EXISTS Assignments (
