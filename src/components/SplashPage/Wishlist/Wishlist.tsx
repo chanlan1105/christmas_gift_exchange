@@ -1,23 +1,35 @@
-"use client";
+import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
+import { WishlistItem } from "@/lib/wishlist";
+import { cookies } from "next/headers";
+import WishlistHeader from "./WishlistHeader/WishlistHeader";
+import WishlistTable from "./WishlistTable/WishlistTable";
 
-import { Button } from "flowbite-react";
-import { useState } from "react";
-import { BsGiftFill, BsPlus } from "react-icons/bs";
-import AddItemModal from "./AddItemModal";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-export default function Wishlist() {
-    const [show, setShow] = useState<boolean>(false);
+export default async function Wishlist() {
+    const cookieStore = await cookies();
+    const wishlistStore = await fetch(`${BASE_URL}/api/wishlist/fetch`, {
+        method: "POST",
+        headers: {
+            "Cookie": cookieStore.toString(),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            target: cookieStore.get("user")?.value
+        })
+    });
+
+    const wishlist: WishlistItem[] = await wishlistStore.json();
 
     return <>
-        <h1 className="text-2xl font-bold mt-10 mb-4 flex items-center gap-3 flex-wrap">
-            <BsGiftFill />
-            <span className="flex-1 text-nowrap">Your wishlist</span>
-            <Button pill className="gap-2 text-nowrap" onClick={() => setShow(true)}>
-                <BsPlus />
-                Add item
-            </Button>
-        </h1>
+        <WishlistHeader />
 
-        <AddItemModal show={show} setShow={setShow} />
+        <div className="overflow-x-auto">
+            {
+                wishlistStore.ok ?
+                <WishlistTable initialWishlist={wishlist} /> :
+                <ErrorAlert errorCode="ERR_WSHLST_USR" />
+            }
+        </div>
     </>;
 }

@@ -1,11 +1,20 @@
 "use client";
 
+import { WishlistItem } from "@/lib/wishlist";
 import { Button, Label, Modal, ModalBody, Spinner, Textarea, TextInput } from "flowbite-react";
-import { Dispatch, FormEvent, SetStateAction, useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Dispatch, FormEvent, SetStateAction, useCallback, useEffect, useState } from "react";
 
-export default function AddItemModal({ show, setShow }: { show: boolean, setShow: Dispatch<SetStateAction<boolean>> }) {
+export default function AddItemModal({
+    show, setShow, values=null
+}: {
+    show: boolean,
+    setShow: Dispatch<SetStateAction<boolean>>,
+    values?: WishlistItem | null
+}) {
     const [links, setLinks] = useState<string[]>([""]);
     const [submitting, setSubmitting] = useState(false);
+    const router = useRouter();
 
     const setLink = useCallback((link: string, index: number) => {
         setLinks(prevLinks => {
@@ -40,23 +49,35 @@ export default function AddItemModal({ show, setShow }: { show: boolean, setShow
         setSubmitting(true);
         const formData = new FormData(e.currentTarget);
 
-        const res = await fetch("/api/wishlist/add_item", {
-            method: "POST",
+        if (values && values.id != null) {
+            formData.set("id", values.id.toString());
+        }
+
+        const res = await fetch("/api/wishlist/item", {
+            method: values && values.id != null ? "PUT" : "POST",
             body: formData
         });
 
-        if (res.ok)
+        if (res.ok) {
             closeModal();
+            router.refresh();
+        }
         else 
             alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD");
 
         setSubmitting(false);
-    }, []);
+    }, [values]);
+
+    useEffect(() => {
+        if (values) {
+            setLinks(values.links);
+        }
+    }, [show, values]);
 
     return <Modal show={show} size="md" className="font-sans">
         <ModalBody>
-            <h3 className="text-xl font-medium mb-4">Add an item to your wishlist</h3>
-            <form className="space-y-6" action="/api/wishlist/add_item" method="POST" onSubmit={e => submitForm(e)} autoComplete="off">
+            <h3 className="text-xl font-medium mb-4">{values ? "Edit" : "Add"} an item {values ? "on" : "to"} your wishlist</h3>
+            <form className="space-y-6" onSubmit={e => submitForm(e)} autoComplete="off">
                 <div>
                     <div className="mb-2">
                         <Label htmlFor="wishlist-add-item">Item</Label>
@@ -65,6 +86,7 @@ export default function AddItemModal({ show, setShow }: { show: boolean, setShow
                         id="wishlist-add-item"
                         name="item"
                         readOnly={submitting}
+                        defaultValue={values?.item}
                         required
                     />
                 </div>
@@ -97,13 +119,15 @@ export default function AddItemModal({ show, setShow }: { show: boolean, setShow
                     <div className="mb-2">
                         <Label htmlFor="wishlist-add-comment">Extra comment (optional)</Label>
                     </div>
-                    <Textarea id="wishlist-add-comment" className="min-h-20" name="desc" readOnly={submitting} />
+                    <Textarea id="wishlist-add-comment" className="min-h-20" name="desc" defaultValue={values?.desc} readOnly={submitting} />
                 </div>
                 
                 <div className="flex gap-2">
                     <Button type="button" color="alternative" onClick={closeModal} disabled={submitting}>Cancel</Button>
                     <Button type="submit" color="green" disabled={submitting}>
-                        Add 
+                        {
+                            values ? "Update" : "Add"
+                        } 
                         {
                             submitting ? <Spinner size="sm" className="ml-2" /> : <></>
                         }

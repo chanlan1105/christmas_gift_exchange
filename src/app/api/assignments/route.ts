@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
     const user = req.cookies.get("user")?.value;
     if (!user)
-        return new Response(null, { status: 400 });
+        return new Response(null, { status: 401 });
 
     const YEAR = new Date().getFullYear();
     const assignments = await sql`

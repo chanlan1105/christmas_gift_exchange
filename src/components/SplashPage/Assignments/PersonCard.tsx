@@ -6,9 +6,9 @@ import ErrorAlert from "../../ErrorAlert/ErrorAlert";
 export default async function PersonCard({ name, assignees }: { name: Cousin, assignees: Cousin[] }) {
     const loggedIn = (await cookies()).get("user")?.value;
     
-        if (!loggedIn) {
-            return <ErrorAlert errorCode="ERR_PSN_CD_USR" />;
-        }
+    if (!loggedIn) {
+        return <ErrorAlert errorCode="ERR_PSN_CD_USR" />;
+    }
 
     const otherAssignees = assignees.filter(a => a != loggedIn);
     return <Card className="max-w-md mb-3">
