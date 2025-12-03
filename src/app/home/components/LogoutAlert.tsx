@@ -9,7 +9,7 @@ export default function LogoutAlert({ loggedIn }: { loggedIn: string }) {
             method: "POST"
         }).then(res => {
             if (res.ok)
-                window.location.reload();
+                window.location.href = "/login";
             else
                 alert("There was an error logging out. Please contact me. Error code: ERR_SPLASH_PG_LOGOUT");
         });

@@ -17,7 +17,7 @@ export default function LoginOptions() {
             }
         }).then(res => {
             if (res.ok)
-                window.location.reload();
+                window.location.href = "/home";
             else
                 alert("There was an error logging you in. Please contact me. Error code: ERR_LOGIN");
         });

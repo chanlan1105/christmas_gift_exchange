@@ -2,7 +2,7 @@
 
 import { Button } from "flowbite-react";
 import { BsGiftFill, BsPlus } from "react-icons/bs";
-import AddItemModal from "../AddItemModal";
+import AddItemModal from "../components/AddItemModal";
 import { useState } from "react";
 
 export default function WishlistHeader() {

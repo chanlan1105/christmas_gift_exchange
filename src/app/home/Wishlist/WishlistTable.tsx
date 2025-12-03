@@ -1,14 +1,33 @@
 "use client";
 
 import { Table, TableHead, TableRow, TableHeadCell, TableBody } from "flowbite-react";
-import ItemRow from "./ItemRow";
+import ItemRow from "../components/ItemRow";
 import { WishlistItem } from "@/lib/wishlist";
-import ItemCard from "./ItemCard";
+import ItemCard from "../components/ItemCard";
 import { useCallback, useEffect, useState } from "react";
 import { WishlistContext } from "@/context/WishlistContext";
-import AddItemModal from "../AddItemModal";
+import AddItemModal from "../components/AddItemModal";
 import { useRouter } from "next/navigation";
 
+/**
+ * Displays a wishlist in a responsive table format with mobile and desktop views.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {WishlistItem[]} props.initialWishlist - The initial list of wishlist items to display
+ * @returns {JSX.Element} A responsive wishlist table with an edit modal and context provider
+ * 
+ * @example
+ * const items = [{ id: 1, item: 'Book', links: ['url'], desc: 'A great book' }];
+ * <WishlistTable initialWishlist={items} />
+ * 
+ * @remarks
+ * - Provides a mobile view using card layout (hidden on sm and up)
+ * - Provides a desktop view using a table layout (hidden below sm)
+ * - Uses WishlistContext to manage modal state and item operations
+ * - Syncs internal state with initialWishlist prop changes
+ * - Includes delete functionality with confirmation dialog
+ */
 export default function WishlistTable({ initialWishlist }: { initialWishlist: WishlistItem[] }) {
     const [show, setShow] = useState(false);
     const [wishlist, setWishlist] = useState(initialWishlist);
@@ -65,7 +84,7 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
             <TableBody className="divide-y">
                 {
                     wishlist.map((item: WishlistItem) =>
-                        <ItemRow id={item.id} item={item.item} links={item.links} desc={item.desc} key={item.id} />
+                        <ItemRow item={item} controls={false} key={item.id} />
                     )
                 }
             </TableBody>

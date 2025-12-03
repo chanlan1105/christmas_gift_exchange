@@ -1,6 +1,6 @@
 import { Cousin } from "@/lib/cousins";
-import PersonCard from "./PersonCard";
-import ErrorAlert from "../../ErrorAlert/ErrorAlert";
+import PersonCard from "../components/PersonCard";
+import ErrorAlert from "../../../components/ErrorAlert/ErrorAlert";
 import { cookies } from "next/headers";
 
 type Assignment = {

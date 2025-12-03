@@ -1,8 +1,8 @@
+import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
+import Assignments from "@/app/home/Assignments/Assignments";
+import LogoutAlert from "@/app/home/components/LogoutAlert";
+import Wishlist from "@/app/home/Wishlist/Wishlist";
 import { cookies } from "next/headers";
-import LogoutAlert from "./LogoutAlert";
-import Assignments from "./Assignments/Assignments";
-import ErrorAlert from "../ErrorAlert/ErrorAlert";
-import Wishlist from "./Wishlist/Wishlist";
 
 export default async function SplashPage() {
     const loggedIn = (await cookies()).get("user")?.value;

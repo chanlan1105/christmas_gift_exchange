@@ -1,8 +1,8 @@
 import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 import { WishlistItem } from "@/lib/wishlist";
 import { cookies } from "next/headers";
-import WishlistHeader from "./WishlistHeader/WishlistHeader";
-import WishlistTable from "./WishlistTable/WishlistTable";
+import WishlistHeader from "./WishlistHeader";
+import WishlistTable from "./WishlistTable";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
