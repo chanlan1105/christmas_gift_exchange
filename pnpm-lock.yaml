@@ -42,6 +42,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.5)
+      daisyui:
+        specifier: ^5.5.5
+        version: 5.5.5
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -1067,6 +1070,9 @@ packages:
 
   csstype@3.2.2:
     resolution: {integrity: sha512-D80T+tiqkd/8B0xNlbstWDG4x6aqVfO52+OlSUNIdkTvmNw0uQpJLeos2J/2XvpyidAFuTPmpad+tUxLndwj6g==}
+
+  daisyui@5.5.5:
+    resolution: {integrity: sha512-ekvI93ZkWIJoCOtDl0D2QMxnWvTejk9V5nWBqRv+7t0xjiBXqAK5U6o6JE2RPvlIC3EqwNyUoIZSdHX9MZK3nw==}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -3167,6 +3173,8 @@ snapshots:
       which: 2.0.2
 
   csstype@3.2.2: {}
+
+  daisyui@5.5.5: {}
 
   damerau-levenshtein@1.0.8: {}
 

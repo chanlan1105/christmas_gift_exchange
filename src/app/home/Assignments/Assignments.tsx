@@ -21,7 +21,7 @@ export default async function Assignments() {
     });
     
     if (!assignmentsStore.ok)
-        return <ErrorAlert errorCode="ERR_ASSMTS_USR" />
+        return <ErrorAlert errorCode="ERR_ASSMTS_USR" options={{ http: assignmentsStore.status }} />
 
     const assignments: Assignment[] = await assignmentsStore.json();
 

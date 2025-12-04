@@ -63,7 +63,7 @@ export default function AddItemModal({
             router.refresh();
         }
         else 
-            alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD");
+            alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD. HTTP status: " + res.status);
 
         setSubmitting(false);
     }, [values]);

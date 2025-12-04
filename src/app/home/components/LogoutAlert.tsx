@@ -11,7 +11,7 @@ export default function LogoutAlert({ loggedIn }: { loggedIn: string }) {
             if (res.ok)
                 window.location.href = "/login";
             else
-                alert("There was an error logging out. Please contact me. Error code: ERR_SPLASH_PG_LOGOUT");
+                alert("There was an error logging out. Please contact me. Error code: ERR_SPLASH_PG_LOGOUT. HTTP status: " + res.status);
         });
     };
 

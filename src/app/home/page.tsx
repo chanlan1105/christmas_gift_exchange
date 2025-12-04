@@ -1,14 +1,14 @@
-import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 import Assignments from "@/app/home/Assignments/Assignments";
 import LogoutAlert from "@/app/home/components/LogoutAlert";
 import Wishlist from "@/app/home/Wishlist/Wishlist";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function SplashPage() {
     const loggedIn = (await cookies()).get("user")?.value;
 
     if (!loggedIn) {
-        return <ErrorAlert errorCode="ERR_SPLASH_PG_USR" />;
+        return redirect("/login");
     }
 
     return <>

@@ -19,7 +19,7 @@ export default function LoginOptions() {
             if (res.ok)
                 window.location.href = "/home";
             else
-                alert("There was an error logging you in. Please contact me. Error code: ERR_LOGIN");
+                alert("There was an error logging you in. Please contact me. Error code: ERR_LOGIN. HTTP status: " + res.status);
         });
     }, [selected]);
 

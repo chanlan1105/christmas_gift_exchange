@@ -28,7 +28,7 @@ export default async function Wishlist() {
             {
                 wishlistStore.ok ?
                 <WishlistTable initialWishlist={wishlist} /> :
-                <ErrorAlert errorCode="ERR_WSHLST_USR" />
+                <ErrorAlert errorCode="ERR_WSHLST_USR" options={{ http: wishlistStore.status }} />
             }
         </div>
     </>;

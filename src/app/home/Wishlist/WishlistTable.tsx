@@ -55,7 +55,7 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
             if (res.ok)
                 router.refresh();
             else 
-                alert("There was an error deleting this item. Error code: ERR_WSHLST_DEL");
+                alert("There was an error deleting this item. Error code: ERR_WSHLST_DEL. HTTP status: " + res.status);
         });
     }, []);
 
@@ -84,7 +84,7 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
             <TableBody className="divide-y">
                 {
                     wishlist.map((item: WishlistItem) =>
-                        <ItemRow item={item} controls={false} key={item.id} />
+                        <ItemRow item={item} controls={true} key={item.id} />
                     )
                 }
             </TableBody>

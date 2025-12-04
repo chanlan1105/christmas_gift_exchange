@@ -64,7 +64,7 @@ export default function ItemRow({
                 }
             </div>
         </TableCell>
-        <TableCell>
+        <TableCell style={{ minWidth: "30ch" }}>
             { /* Render description, if present */ }
             {
                 desc ?? ""
