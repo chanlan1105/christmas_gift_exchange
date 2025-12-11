@@ -1,11 +1,16 @@
 import { Cousin } from "@/lib/cousins";
 import { sql } from "@/lib/db";
 import { NextRequest } from "next/server";
+import { getUserFromToken } from "../../auth/authToken";
 
 export async function POST(req: NextRequest) {
-    const user = req.cookies.get("user")?.value;
-    if (!user)
+    const token = req.cookies.get("auth_jwt")?.value;
+    if (!token)
         return new Response(null, { status: 401 });
+
+    const user = await getUserFromToken(token);
+    if (!user)
+        return new Response(null, { status: 403 });
 
     const { target }: { target: Cousin } = await req.json();
 

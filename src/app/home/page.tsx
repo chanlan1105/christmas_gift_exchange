@@ -3,13 +3,18 @@ import LogoutAlert from "@/app/home/components/LogoutAlert";
 import Wishlist from "@/app/home/Wishlist/Wishlist";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getUserFromToken } from "../api/auth/authToken";
 
 export default async function SplashPage() {
-    const loggedIn = (await cookies()).get("user")?.value;
-
-    if (!loggedIn) {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_jwt")?.value;
+    const user = cookieStore.get("user")?.value;
+    if (!token || !user)
         return redirect("/login");
-    }
+
+    const loggedIn = await getUserFromToken(token);
+    if (!loggedIn || loggedIn != user)
+        return redirect("/login");
 
     return <>
         <LogoutAlert loggedIn={loggedIn} />
