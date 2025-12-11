@@ -1,10 +1,15 @@
 import { sql } from "@/lib/db";
 import { NextRequest } from "next/server";
+import { getUserFromToken } from "../../auth/authToken";
 
 export async function POST(req: NextRequest) {
-    const user = req.cookies.get("user")?.value;
-    if (!user)
+    const token = req.cookies.get("auth_jwt")?.value;
+    if (!token)
         return new Response(null, { status: 401 });
+
+    const user = await getUserFromToken(token);
+    if (!user)
+        return new Response(null, { status: 403 });
 
     const formData = await req.formData();
     const item = formData.get("item")?.toString();
@@ -33,9 +38,13 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-    const user = req.cookies.get("user")?.value;
-    if (!user)
+    const token = req.cookies.get("auth_jwt")?.value;
+    if (!token)
         return new Response(null, { status: 401 });
+    
+    const user = await getUserFromToken(token);
+    if (!user)
+        return new Response(null, { status: 403 });
 
     // Parse formData
     const formData = await req.formData();
@@ -75,9 +84,13 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-    const user = req.cookies.get("user")?.value;
-    if (!user)
+    const token = req.cookies.get("auth_jwt")?.value;
+    if (!token)
         return new Response(null, { status: 401 });
+
+    const user = await getUserFromToken(token);
+    if (!user)
+        return new Response(null, { status: 403 });
 
     const data = await req.json();
     const id = data.id;

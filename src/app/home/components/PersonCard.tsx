@@ -53,7 +53,7 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
             <input type="checkbox" className="peer" />
             
             <p className="
-                text-gray-800
+                text-gray-800 dark:text-gray-100
                 inline-flex items-center gap-3
                 collapse-title
                 peer-checked:[&>svg.transform]:rotate-90

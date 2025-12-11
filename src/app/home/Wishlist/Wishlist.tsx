@@ -1,5 +1,4 @@
 import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
-import { WishlistItem } from "@/lib/wishlist";
 import { cookies } from "next/headers";
 import WishlistHeader from "./WishlistHeader";
 import WishlistTable from "./WishlistTable";
@@ -19,15 +18,13 @@ export default async function Wishlist() {
         })
     });
 
-    const wishlist: WishlistItem[] = await wishlistStore.json();
-
     return <>
         <WishlistHeader />
 
         <div className="overflow-x-auto">
             {
                 wishlistStore.ok ?
-                <WishlistTable initialWishlist={wishlist} /> :
+                <WishlistTable initialWishlist={await wishlistStore.json()} /> :
                 <ErrorAlert errorCode="ERR_WSHLST_USR" options={{ http: wishlistStore.status }} />
             }
         </div>

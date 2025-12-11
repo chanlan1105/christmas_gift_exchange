@@ -1,15 +1,16 @@
 "use client";
 
 import { Alert } from "flowbite-react";
+import { redirect } from "next/navigation";
 import { BsExclamationTriangleFill } from "react-icons/bs";
 
 export default function LogoutAlert({ loggedIn }: { loggedIn: string }) {
     const logout = () => {
-        fetch("/api/logout", {
+        fetch("/api/auth/logout", {
             method: "POST"
         }).then(res => {
             if (res.ok)
-                window.location.href = "/login";
+                redirect("/login");
             else
                 alert("There was an error logging out. Please contact me. Error code: ERR_SPLASH_PG_LOGOUT. HTTP status: " + res.status);
         });
