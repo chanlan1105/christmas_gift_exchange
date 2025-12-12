@@ -13,9 +13,9 @@ import { useRouter } from "next/navigation";
  * Displays a wishlist in a responsive table format with mobile and desktop views.
  * 
  * @component
- * @param {Object} props - Component props
- * @param {WishlistItem[]} props.initialWishlist - The initial list of wishlist items to display
- * @returns {JSX.Element} A responsive wishlist table with an edit modal and context provider
+ * @param props - Component props
+ * @param props.initialWishlist - The initial list of wishlist items to display
+ * @returns A responsive wishlist table with an edit modal and context provider
  * 
  * @example
  * const items = [{ id: 1, item: 'Book', links: ['url'], desc: 'A great book' }];
@@ -39,11 +39,11 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
         setWishlist(initialWishlist);
     }, [initialWishlist]);
 
-    const deleteItem = useCallback((id: number) => {
+    const deleteItem = useCallback(async (id: number) => {
         if (!confirm("Are you sure you want to delete this item? This cannot be reversed."))
             return;
 
-        fetch("/api/wishlist/item", {
+        const res = await fetch("/api/wishlist/item", {
             method: "DELETE",
             body: JSON.stringify({
                 id
@@ -51,12 +51,12 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.ok)
-                router.refresh();
-            else 
-                alert("There was an error deleting this item. Error code: ERR_WSHLST_DEL. HTTP status: " + res.status);
         });
+        
+        if (res.ok)
+            router.refresh();
+        else 
+            alert("There was an error deleting this item. Error code: ERR_WSHLST_DEL. HTTP status: " + res.status);
     }, []);
 
     return <WishlistContext.Provider value={{

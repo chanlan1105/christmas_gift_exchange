@@ -3,7 +3,7 @@ import { WishlistContext } from "@/context/WishlistContext";
 import { WishlistItem } from "@/lib/wishlist";
 import { tightCard } from "@/theme/tightCard";
 import { Card } from "flowbite-react";
-import { useContext } from "react";
+import { useContext, useTransition } from "react";
 import { BsChatLeftText, BsLink45Deg, BsPencilFill, BsTrashFill } from "react-icons/bs";
 
 export default function ItemCard({
@@ -15,6 +15,7 @@ export default function ItemCard({
         return <ErrorAlert errorCode="ERR_WSHLST_ITEMROW_CXT" />;
 
     const { setShow, setActiveItem, deleteItem } = contextValues;
+    const [deletePending, startDeleteTransition] = useTransition();
 
     return <Card className="shadow-none" theme={tightCard.card}>
         <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
@@ -62,10 +63,21 @@ export default function ItemCard({
             }}>
                 <BsPencilFill /> Edit
             </span>
-            <span className="text-red-600 dark:text-red-400 hover:underline cursor-pointer flex items-center gap-2" onClick={() => {
-                deleteItem(id);
+            <span className={`
+                text-red-600 dark:text-red-400
+                hover:underline
+                ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
+                flex items-center gap-2
+                ${deletePending ? "opacity-70" : ""}
+            `} onClick={() => {
+                if (deletePending) return;
+                
+                startDeleteTransition(async () => {
+                    await deleteItem(id);
+                });
             }}>
-                <BsTrashFill /> Delete
+                { !deletePending && <BsTrashFill /> }
+                { deletePending ? <>Deleting&hellip;</> : "Delete" }
             </span>
         </div>
     </Card>;
