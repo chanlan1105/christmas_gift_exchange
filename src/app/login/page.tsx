@@ -5,7 +5,7 @@ const startOfYear = new Date(now.getFullYear(), 0, 0);
 const diff = (Number(now) - now.getTimezoneOffset() * 60e3) - (Number(startOfYear) - startOfYear.getTimezoneOffset() * 60e3);
 
 /** A numerical representation of the current day, from 1 to 365. */
-const DAY = Math.floor(diff / (1000*60*60*24));
+const DAY = Math.floor(diff / (1000 * 60 * 60 * 24));
 
 /** A numerical representation of the current month, from 1 to 12. */
 const MONTH = now.getMonth() + 1;
@@ -22,12 +22,12 @@ export default function LoginMenu() {
         {
             DAY > CHRISTMAS + 1 ?
                 <p>Christmas {YEAR} has already passed. Check back next year!</p> :
-            MONTH >= 11 ?
-                <>
-                    <p className="mb-3">Please select your name to log in (don't cheat, or that defeats the purpose!):</p>
-                    <LoginOptions />
-                </>:
-                <p>Check back in November for details on Christmas {YEAR}.</p>
+                MONTH >= 11 ?
+                    <>
+                        <p className="mb-3">Please select your name to log in (don't cheat, or that defeats the purpose!):</p>
+                        <LoginOptions />
+                    </> :
+                    <p>Check back in November for details on Christmas {YEAR}.</p>
         }
     </>;
 }
