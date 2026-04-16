@@ -4,7 +4,7 @@ import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 import { WishlistContext } from "@/context/WishlistContext";
 import { noLinkProvidedText, WishlistItem } from "@/lib/wishlist";
 import { TableCell, TableRow } from "flowbite-react"
-import { useContext } from "react";
+import { useContext, useTransition } from "react";
 import { BsPencilFill, BsTrashFill } from "react-icons/bs";
 
 interface ItemRowDetails {
@@ -16,17 +16,17 @@ interface ItemRowDetails {
  * Renders a table row displaying a wishlist item with its details.
  * 
  * @component
- * @param {ItemRowDetails} props - The component props
- * @param {Object} props.item - The item object
- * @param {string} props.item.id - The unique identifier of the item
- * @param {string} props.item.item - The name of the item
- * @param {string[]} props.item.links - Array of URLs associated with the item
- * @param {string} props.item.desc - Description of the item
- * @param {boolean} [props.controls] - Whether to display edit and delete controls
+ * @param props - The component props
+ * @param props.item - The item object
+ * @param props.item.id - The unique identifier of the item
+ * @param props.item.item - The name of the item
+ * @param props.item.links - Array of URLs associated with the item
+ * @param props.item.desc - Description of the item
+ * @param [props.controls] - Whether to display edit and delete controls
  * 
- * @returns {JSX.Element} A TableRow component containing item details and optional control buttons
+ * @returns A TableRow component containing item details and optional control buttons
  * 
- * @throws {JSX.Element} Renders an ErrorAlert if context is required but unavailable
+ * @throws Renders an ErrorAlert if context is required but unavailable
  * 
  * @example
  * <ItemRow 
@@ -49,6 +49,8 @@ export default function ItemRow({
         setActiveItem = () => {},
         deleteItem = () => {}
     } = contextValues || {};
+
+    const [deletePending, startDeleteTransition] = useTransition();
 
     return <TableRow className="bg-white border-gray-300 dark:border-gray-700 dark:bg-gray-800 items-stretch">
         <TableCell>{item}</TableCell>
@@ -82,10 +84,21 @@ export default function ItemRow({
                     }}>
                         <BsPencilFill /> Edit
                     </span>
-                    <span className="text-red-600 dark:text-red-400 hover:underline cursor-pointer flex items-center gap-2" onClick={() => {
-                        deleteItem(id);
+                    <span className={`
+                        text-red-600 dark:text-red-400
+                        hover:underline
+                        ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
+                        flex items-center gap-2
+                        ${deletePending ? "opacity-70" : ""}
+                    `} onClick={() => {
+                        if (deletePending) return;
+
+                        startDeleteTransition(async () => {
+                            await deleteItem(id);
+                        });
                     }}>
-                        <BsTrashFill /> Delete
+                        { !deletePending && <BsTrashFill /> }
+                        { deletePending ? <>Deleting&hellip;</> : "Delete" }
                     </span>
                 </div>
             </TableCell>

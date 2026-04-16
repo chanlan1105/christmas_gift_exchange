@@ -1,20 +1,20 @@
 {
-  "files.associations": {
-    "*.css": "tailwindcss"
-  },
-  "tailwindCSS.classAttributes": [
-    "class",
-    "className",
-    "theme"
-  ],
-  "tailwindCSS.experimental.classRegex": [
-    [
-      "twMerge\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "tailwindCSS.classAttributes": [
+        "class",
+        "className",
+        "theme"
     ],
-    [
-      "createTheme(?:<\\w+>)?\\s*\\(([^)]*)\\)",
-      "{?\\s?[\\w].*:\\s*?[\"'`]([^\"'`]*).*?,?\\s?}?"
+    "tailwindCSS.experimental.classRegex": [
+        [
+            "twMerge\\(([^)]*)\\)",
+            "[\"'`]([^\"'`]*).*?[\"'`]"
+        ],
+        [
+            "createTheme(?:<\\w+>)?\\s*\\(([^)]*)\\)",
+            "{?\\s?[\\w].*:\\s*?[\"'`]([^\"'`]*).*?,?\\s?}?"
+        ]
     ]
-  ]
 }
