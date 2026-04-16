@@ -2,7 +2,7 @@ import LoginOptions from "./LoginOptions";
 
 export const dynamic = "force-dynamic";
 
-const now = new Date();
+const now = new Date("2026-11-05");
 const startOfYear = new Date(now.getFullYear(), 0, 0);
 const diff = (Number(now) - now.getTimezoneOffset() * 60e3) - (Number(startOfYear) - startOfYear.getTimezoneOffset() * 60e3);
 

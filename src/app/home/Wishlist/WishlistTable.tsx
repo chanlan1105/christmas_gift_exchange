@@ -66,7 +66,7 @@ export default function WishlistTable({ initialWishlist }: { initialWishlist: Wi
         <div className="sm:hidden space-y-3">
             {
                 wishlist.map((item: WishlistItem) =>
-                    <ItemCard id={item.id} item={item.item} links={item.links} desc={item.desc} key={item.id} />
+                    <ItemCard item={item} controls={true} key={item.id} />
                 )
             }
         </div>
