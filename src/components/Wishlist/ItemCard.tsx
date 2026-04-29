@@ -7,15 +7,20 @@ import { tightCard } from "@/theme/tightCard";
 import { Card } from "flowbite-react";
 import { useContext, useTransition } from "react";
 import { BsChatLeftText, BsLink45Deg, BsPencilFill, BsTrashFill } from "react-icons/bs";
+import ClaimControl from "./ClaimControl";
 
 interface ItemCardProps {
     item: WishlistItem;
     controls?: boolean;
+    claimable?: boolean;
+    loggedInUser?: string;
 }
 
 export default function ItemCard({
-    item: { id, item, links, desc },
-    controls = true
+    item: { id, item, links, desc, claim_data },
+    controls = true,
+    claimable = false,
+    loggedInUser
 }: ItemCardProps) {
     const contextValues = controls ? useContext(WishlistContext) : null;
 
@@ -37,10 +42,10 @@ export default function ItemCard({
                         &#x200B;
                         <BsLink45Deg />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col grow gap-2">
                         {
                             links.map(link =>
-                                <a href={link} target="_blank" key={link} className="w-min hover:underline">
+                                <a href={link} target="_blank" key={link} className="hover:underline w-full break-all line-clamp-3">
                                     {link}
                                 </a>
                             )
@@ -89,6 +94,13 @@ export default function ItemCard({
                     {!deletePending && <BsTrashFill />}
                     {deletePending ? <>Deleting&hellip;</> : "Delete"}
                 </span>
+            </div>
+        }
+
+        {
+            claimable && !controls &&
+            <div className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-3">
+                <ClaimControl itemId={id} claimData={claim_data} loggedInUser={loggedInUser} />
             </div>
         }
     </Card>;

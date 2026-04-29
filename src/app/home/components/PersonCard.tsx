@@ -3,8 +3,8 @@ import { Card, Table, TableBody, TableHead, TableHeadCell, TableRow } from "flow
 import { cookies } from "next/headers";
 import ErrorAlert from "../../../components/ErrorAlert/ErrorAlert";
 import { BsChevronRight, BsGift } from "react-icons/bs";
-import ItemRow from "./ItemRow";
-import ItemCard from "./ItemCard";
+import ItemRow from "@/components/Wishlist/ItemRow";
+import ItemCard from "@/components/Wishlist/ItemCard";
 import { WishlistItem } from "@/lib/wishlist";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -60,14 +60,14 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
                 collapse-title
                 peer-checked:[&>svg.transform]:rotate-90
             ">
-                <BsGift /> View wishlist ({wishlist.length}) <BsChevronRight className="transition-transform transform" />
+                <BsGift /> <span className="whitespace-nowrap">View wishlist ({wishlist.length})</span> <BsChevronRight className="transition-transform transform" />
             </p>
 
-            <div className="collapse-content overflow-x-auto overflow-y-hidden">
+            <div className="collapse-content overflow-x-auto overflow-y-hidden px-0">
                 <div className="space-y-3 mt-3">
                     {
                         wishlist.map((item: WishlistItem) =>
-                            <ItemCard item={item} controls={false} key={item.id} />
+                            <ItemCard item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
                         )
                     }
                 </div>
@@ -86,26 +86,21 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
 
             <input type="checkbox" id={`modal-${name.replace(/\s+/g, '-')}`} className="modal-toggle" />
             <div className="modal" role="dialog">
-                <div className="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800">
+                <div className="modal-box w-11/12 max-w-5xl bg-base">
                     <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">{name}&apos;s Wishlist</h3>
 
                     <div className="overflow-x-auto">
-                        <Table className="table w-full">
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeadCell>Item</TableHeadCell>
-                                    <TableHeadCell>Links</TableHeadCell>
-                                    <TableHeadCell>Comment</TableHeadCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody className="divide-y">
-                                {
-                                    wishlist.map((item: WishlistItem) =>
-                                        <ItemRow item={item} controls={false} key={item.id} />
-                                    )
-                                }
-                            </TableBody>
-                        </Table>
+                        <ul className={`
+                            list mb-2 mr-2
+                            bg-base-100 dark:bg-base-200 shadow-md
+                            border border-gray-200 dark:border-gray-800 rounded-box
+                        `}>
+                            {
+                                wishlist.map((item: WishlistItem) =>
+                                    <ItemRow item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
+                                )
+                            }
+                        </ul>
                     </div>
                 </div>
                 <label className="modal-backdrop" htmlFor={`modal-${name.replace(/\s+/g, '-')}`}>Close</label>

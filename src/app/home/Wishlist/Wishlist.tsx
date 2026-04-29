@@ -1,7 +1,7 @@
 import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 import { cookies } from "next/headers";
 import WishlistHeader from "./WishlistHeader";
-import WishlistTable from "./WishlistTable";
+import WishlistTable from "@/components/Wishlist/WishlistTable";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -24,8 +24,8 @@ export default async function Wishlist() {
         <div className="overflow-x-auto">
             {
                 wishlistStore.ok ?
-                <WishlistTable initialWishlist={await wishlistStore.json()} /> :
-                <ErrorAlert errorCode="ERR_WSHLST_USR" options={{ http: wishlistStore.status }} />
+                    <WishlistTable initialWishlist={await wishlistStore.json()} controls={true} /> :
+                    <ErrorAlert errorCode="ERR_WSHLST_USR" options={{ http: wishlistStore.status }} />
             }
         </div>
     </>;

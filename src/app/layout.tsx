@@ -30,7 +30,7 @@ export default function RootLayout({
             >
                 <ThemeProvider theme={theme}>
                     <div className="flex min-h-screen items-center justify-center bg-white font-sans dark:bg-black">
-                        <main className="min-h-screen w-full max-w-3xl py-32 px-16 bg-white dark:bg-black sm:items-start">
+                        <main className="min-h-screen w-full max-w-3xl py-32 px-8 sm:px-16 bg-white dark:bg-black sm:items-start">
                             {children}
                         </main>
                     </div>

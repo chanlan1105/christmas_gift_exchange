@@ -1,12 +1,12 @@
 "use client";
 
 import { WishlistItem } from "@/lib/wishlist";
-import { Button, Label, Modal, ModalBody, Spinner, Textarea, TextInput } from "flowbite-react";
+import { Button, Label, Spinner, Textarea, TextInput } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { Dispatch, FormEvent, SetStateAction, useCallback, useEffect, useState } from "react";
 
 export default function AddItemModal({
-    show, setShow, values=null
+    show, setShow, values = null
 }: {
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
@@ -23,7 +23,7 @@ export default function AddItemModal({
             newLinks[index] = link;
 
             // If link array is full, ensure there is an empty box at the end
-            if (newLinks[newLinks.length - 1] != "") 
+            if (newLinks[newLinks.length - 1] != "")
                 newLinks.push("");
 
             return newLinks;
@@ -62,7 +62,7 @@ export default function AddItemModal({
             closeModal();
             router.refresh();
         }
-        else 
+        else
             alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD. HTTP status: " + res.status);
 
         setSubmitting(false);
@@ -74,9 +74,9 @@ export default function AddItemModal({
         }
     }, [show, values]);
 
-    return <Modal show={show} size="md" className="font-sans">
-        <ModalBody>
-            <h3 className="text-xl font-medium mb-4">{values ? "Edit" : "Add"} an item {values ? "on" : "to"} your wishlist</h3>
+    return <dialog className={`modal ${show ? "modal-open" : ""}`}>
+        <div className="modal-box font-sans max-w-md bg-white dark:bg-gray-800">
+            <h3 className="text-xl font-medium mb-4 text-gray-900 dark:text-white">{values ? "Edit" : "Add"} an item {values ? "on" : "to"} your wishlist</h3>
             <form className="space-y-6" onSubmit={e => submitForm(e)} autoComplete="off">
                 <div>
                     <div className="mb-2">
@@ -121,19 +121,22 @@ export default function AddItemModal({
                     </div>
                     <Textarea id="wishlist-add-comment" className="min-h-20" name="desc" defaultValue={values?.desc} readOnly={submitting} />
                 </div>
-                
+
                 <div className="flex gap-2">
                     <Button type="button" color="alternative" onClick={closeModal} disabled={submitting}>Cancel</Button>
                     <Button type="submit" color="green" disabled={submitting}>
                         {
                             values ? "Update" : "Add"
-                        } 
+                        }
                         {
                             submitting ? <Spinner size="sm" className="ml-2" /> : <></>
                         }
                     </Button>
                 </div>
             </form>
-        </ModalBody>
-    </Modal>;
+        </div>
+        <form method="dialog" className="modal-backdrop">
+            <button onClick={closeModal} type="button">close</button>
+        </form>
+    </dialog>;
 }
