@@ -3,8 +3,8 @@ import { Card, Table, TableBody, TableHead, TableHeadCell, TableRow } from "flow
 import { cookies } from "next/headers";
 import ErrorAlert from "../../../components/ErrorAlert/ErrorAlert";
 import { BsChevronRight, BsGift } from "react-icons/bs";
-import ItemRow from "./ItemRow";
-import ItemCard from "./ItemCard";
+import ItemRow from "@/components/Wishlist/ItemRow";
+import ItemCard from "@/components/Wishlist/ItemCard";
 import { WishlistItem } from "@/lib/wishlist";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";

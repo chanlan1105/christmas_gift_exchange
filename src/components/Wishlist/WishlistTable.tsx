@@ -1,10 +1,10 @@
 "use client";
 
-import ItemRow from "../components/ItemRow";
+import ItemRow from "./ItemRow";
 import { WishlistItem } from "@/lib/wishlist";
 import { useCallback, useEffect, useState } from "react";
 import { WishlistContext } from "@/context/WishlistContext";
-import AddItemModal from "../components/AddItemModal";
+import AddItemModal from "./AddItemModal";
 import { useRouter } from "next/navigation";
 
 export default function WishlistTable({ initialWishlist, controls }: { initialWishlist: WishlistItem[], controls: boolean }) {
