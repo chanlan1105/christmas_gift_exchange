@@ -28,24 +28,46 @@ export async function POST(req: NextRequest) {
                 FROM assignments
                 WHERE 
                     assignedto=${user} AND
-                    "year"=${YEAR}
+                    "year"=${YEAR} AND 
+                    person=${target}
             `;
-            if (!assignedUsers.map(({ person }) => person).includes(target))
+            if (assignedUsers.length === 0)
                 return new Response(null, { status: 403 });
+
+            // Fetch target wishlist and claimed items
+            const wishlist = await sql`
+                SELECT w.*, (
+                    SELECT json_agg(json_build_object(
+                        'user', c.claimed_by,
+                        'comment', c.comment
+                    ))
+                    FROM claimed_items c
+                    WHERE c.item_id = w.id
+                ) AS claim_data
+                FROM wishlist w
+                WHERE w.person = ${target} AND w."year" = ${YEAR}
+                ORDER BY w.id ASC;
+            `;
+
+            return Response.json(wishlist);
         }
+        else {
+            // Fetching only the user's wishlist.
+            // Don't grab any claim data to avoid spoiling surprises!
+            const wishlist = await sql`
+                SELECT id, item, links, "desc"
+                FROM wishlist
+                WHERE
+                    person=${target} AND
+                    "year"=${YEAR}
+                ORDER BY id ASC;
+            `;
 
-        // Fetch target wishlist
-        const wishlist = await sql`
-            SELECT id, item, links, "desc"
-            FROM wishlist
-            WHERE
-                person=${target} AND
-                "year"=${YEAR}
-        `;
-
-        return Response.json(wishlist);
+            return Response.json(wishlist);
+        }
     }
     catch (err) {
+        console.error(err);
         return new Response(null, { status: 500 });
     }
 }

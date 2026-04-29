@@ -6,10 +6,13 @@ import { noLinkProvidedText, WishlistItem } from "@/lib/wishlist";
 import { TableCell, TableRow } from "flowbite-react"
 import { useContext, useTransition } from "react";
 import { BsPencilFill, BsTrashFill } from "react-icons/bs";
+import ClaimControl from "./ClaimControl";
 
 interface ItemRowDetails {
     item: WishlistItem,
-    controls: boolean
+    controls: boolean,
+    claimable?: boolean,
+    loggedInUser?: string
 };
 
 /**
@@ -35,8 +38,10 @@ interface ItemRowDetails {
  * />
  */
 export default function ItemRow({
-    item: { id, item, links, desc },
-    controls
+    item: { id, item, links, desc, claim_data },
+    controls,
+    claimable,
+    loggedInUser
 }: ItemRowDetails) {
     // Fetch context values, if needed, for edit and delete controls
     const contextValues = controls ? useContext(WishlistContext) : null;
@@ -101,6 +106,14 @@ export default function ItemRow({
                         { deletePending ? <>Deleting&hellip;</> : "Delete" }
                     </span>
                 </div>
+            </TableCell>
+        }
+        
+        {
+            /* Render claim controls */
+            claimable && !controls &&
+            <TableCell>
+                <ClaimControl itemId={id} claimData={claim_data} loggedInUser={loggedInUser} />
             </TableCell>
         }
         

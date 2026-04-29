@@ -60,14 +60,14 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
                 collapse-title
                 peer-checked:[&>svg.transform]:rotate-90
             ">
-                <BsGift /> View wishlist ({wishlist.length}) <BsChevronRight className="transition-transform transform" />
+                <BsGift /> <span className="whitespace-nowrap">View wishlist ({wishlist.length})</span> <BsChevronRight className="transition-transform transform" />
             </p>
 
-            <div className="collapse-content overflow-x-auto overflow-y-hidden">
+            <div className="collapse-content overflow-x-auto overflow-y-hidden px-0">
                 <div className="space-y-3 mt-3">
                     {
                         wishlist.map((item: WishlistItem) =>
-                            <ItemCard item={item} controls={false} key={item.id} />
+                            <ItemCard item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
                         )
                     }
                 </div>
@@ -96,12 +96,13 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
                                     <TableHeadCell>Item</TableHeadCell>
                                     <TableHeadCell>Links</TableHeadCell>
                                     <TableHeadCell>Comment</TableHeadCell>
+                                    <TableHeadCell>Claim</TableHeadCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody className="divide-y">
                                 {
                                     wishlist.map((item: WishlistItem) =>
-                                        <ItemRow item={item} controls={false} key={item.id} />
+                                        <ItemRow item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
                                     )
                                 }
                             </TableBody>
