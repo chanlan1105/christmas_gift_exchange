@@ -86,27 +86,21 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
 
             <input type="checkbox" id={`modal-${name.replace(/\s+/g, '-')}`} className="modal-toggle" />
             <div className="modal" role="dialog">
-                <div className="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800">
+                <div className="modal-box w-11/12 max-w-5xl bg-base">
                     <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">{name}&apos;s Wishlist</h3>
 
                     <div className="overflow-x-auto">
-                        <Table className="table w-full">
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeadCell>Item</TableHeadCell>
-                                    <TableHeadCell>Links</TableHeadCell>
-                                    <TableHeadCell>Comment</TableHeadCell>
-                                    <TableHeadCell>Claim</TableHeadCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody className="divide-y">
-                                {
-                                    wishlist.map((item: WishlistItem) =>
-                                        <ItemRow item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
-                                    )
-                                }
-                            </TableBody>
-                        </Table>
+                        <ul className={`
+                            list mb-2 mr-2
+                            bg-base-100 dark:bg-base-200 shadow-md
+                            border border-gray-200 dark:border-gray-800 rounded-box
+                        `}>
+                            {
+                                wishlist.map((item: WishlistItem) =>
+                                    <ItemRow item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
+                                )
+                            }
+                        </ul>
                     </div>
                 </div>
                 <label className="modal-backdrop" htmlFor={`modal-${name.replace(/\s+/g, '-')}`}>Close</label>

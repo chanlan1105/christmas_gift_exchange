@@ -15,28 +15,6 @@ interface ItemRowDetails {
     loggedInUser?: string
 };
 
-/**
- * Renders a table row displaying a wishlist item with its details.
- * 
- * @component
- * @param props - The component props
- * @param props.item - The item object
- * @param props.item.id - The unique identifier of the item
- * @param props.item.item - The name of the item
- * @param props.item.links - Array of URLs associated with the item
- * @param props.item.desc - Description of the item
- * @param [props.controls] - Whether to display edit and delete controls
- * 
- * @returns A TableRow component containing item details and optional control buttons
- * 
- * @throws Renders an ErrorAlert if context is required but unavailable
- * 
- * @example
- * <ItemRow 
- *   item={{ id: "1", item: "Book", links: ["https://example.com"], desc: "A great book" }} 
- *   controls={true} 
- * />
- */
 export default function ItemRow({
     item: { id, item, links, desc, claim_data },
     controls,
@@ -49,73 +27,60 @@ export default function ItemRow({
     if (!contextValues && controls)
         return <ErrorAlert errorCode="ERR_WSHLST_ITEMROW_CXT" />;
 
-    const { 
-        setShow = () => {},
-        setActiveItem = () => {},
-        deleteItem = () => {}
+    const {
+        setShow = () => { },
+        setActiveItem = () => { },
+        deleteItem = () => { }
     } = contextValues || {};
 
     const [deletePending, startDeleteTransition] = useTransition();
 
-    return <TableRow className="bg-white border-gray-300 dark:border-gray-700 dark:bg-gray-800 items-stretch">
-        <TableCell>{item}</TableCell>
-        <TableCell>
-            { /* Render links */ }
-            <div className="flex flex-col gap-1 h-full">
+    return <li className="list-row flex">
+        <div className="flex flex-col grow self-center">
+            <h3 className="font-semibold text-base">{item}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-200">{desc}</p>
+
+            <div className="list-col-wrap text-gray-600 dark:text-gray-200 flex flex-col mt-2">
                 {
                     links.length ?
-                    links.map(link =>
-                        <a href={link} target="_blank" key={link} className="w-min hover:underline">{link}</a>
-                    ) :
-                    noLinkProvidedText
+                        links.map(link =>
+                            <a href={link} target="_blank" key={link} className="w-fit hover:underline line-clamp-3">{link}</a>
+                        ) :
+                        noLinkProvidedText
                 }
             </div>
-        </TableCell>
-        <TableCell style={{ minWidth: "30ch" }}>
-            { /* Render description, if present */ }
-            {
-                desc ?? ""
-            }
-        </TableCell>
-
+        </div>
         {
             /* Render add/edit controls */
             controls &&
-            <TableCell className="pl-0 pr-3">
-                <div className="flex flex-col gap-1">
-                    <span className="text-primary-600 dark:text-primary-400 hover:underline cursor-pointer flex items-center gap-2" onClick={() => {
-                        setActiveItem({ id, item, links: [...links, ""], desc });
-                        setShow(true);
-                    }}>
-                        <BsPencilFill /> Edit
-                    </span>
-                    <span className={`
-                        text-red-600 dark:text-red-400
-                        hover:underline
-                        ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
-                        flex items-center gap-2
-                        ${deletePending ? "opacity-70" : ""}
-                    `} onClick={() => {
+            <div className="flex flex-col sm:flex-row sm:gap-2">
+                <button className="btn btn-square btn-ghost hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Edit item" onClick={() => {
+                    setActiveItem({ id, item, links: [...links, ""], desc });
+                    setShow(true);
+                }}>
+                    <BsPencilFill />
+                </button>
+                <button className={`
+                    btn btn-square btn-ghost hover:bg-gray-100 dark:hover:bg-gray-800
+                    ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
+                    ${deletePending ? "opacity-70" : ""}
+                `} onClick={() => {
                         if (deletePending) return;
 
                         startDeleteTransition(async () => {
                             await deleteItem(id);
                         });
                     }}>
-                        { !deletePending && <BsTrashFill /> }
-                        { deletePending ? <>Deleting&hellip;</> : "Delete" }
-                    </span>
-                </div>
-            </TableCell>
+                    {deletePending ? <span className="loading loading-spinner"></span> : <BsTrashFill />}
+                </button>
+            </div>
         }
-        
         {
             /* Render claim controls */
             claimable && !controls &&
-            <TableCell>
+            <div className="flex flex-col sm:flex-row sm:gap-2">
                 <ClaimControl itemId={id} claimData={claim_data} loggedInUser={loggedInUser} />
-            </TableCell>
+            </div>
         }
-        
-    </TableRow>;
+    </li>;
 }

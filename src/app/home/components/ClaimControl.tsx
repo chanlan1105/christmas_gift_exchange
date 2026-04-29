@@ -44,7 +44,7 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
             {claimData && claimData.length > 0 && (
                 <div className="text-sm text-gray-600 dark:text-gray-300 flex flex-col gap-1">
                     {claimData.map((claim, i) => (
-                        <div key={i} role="alert" className="alert">
+                        <div key={i} role="alert" className="alert dark:bg-gray-800">
                             <div>
                                 <h3><strong>{claim.user}</strong> claimed this</h3>
                                 {claim.comment && <div className="italic text-xs flex items-center gap-1"><BsChatLeftText /> {claim.comment}</div>}
@@ -64,16 +64,16 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                         disabled={pending}
                     />
                     <div className="flex gap-2">
-                        <Button size="xs" color="green" onClick={handleClaim} disabled={pending} className="flex-1">
+                        <Button size="xs" color="green" onClick={handleClaim} disabled={pending} className="flex-1 transition-colors">
                             {pending && <Spinner size="sm" light />}
                             Save
                         </Button>
-                        <Button size="xs" color="gray" onClick={() => setIsClaiming(false)} disabled={pending} className="flex-1">Cancel</Button>
+                        <Button size="xs" color="gray" onClick={() => setIsClaiming(false)} disabled={pending} className="flex-1 transition-colors">Cancel</Button>
                     </div>
                 </div>
             ) : claimData?.filter(({ user }) => user == loggedInUser).length ?
                 <ButtonGroup className="shadow-none">
-                    <Button className="flex-1" size="sm" onClick={() => {
+                    <Button className="flex-1 transition-colors" size="sm" onClick={() => {
                         const existingComment = claimData?.find(({ user }) => user == loggedInUser)?.comment;
                         setComment(existingComment || "");
                         setIsClaiming(true);
@@ -82,7 +82,7 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                         Edit
                     </Button>
 
-                    <Button className="flex-1" size="sm" color="gray" outline disabled={pending} onClick={() => {
+                    <Button className="flex-1 whitespace-nowrap transition-colors" size="sm" color="gray" outline disabled={pending} onClick={() => {
                         startTransition(async () => {
                             const res = await fetch("/api/wishlist/claim", {
                                 method: "DELETE",
@@ -100,7 +100,7 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                         Unclaim
                     </Button>
                 </ButtonGroup>
-                : <Button size="sm" onClick={() => setIsClaiming(true)} outline>
+                : <Button className="transition-colors" size="sm" onClick={() => setIsClaiming(true)} outline>
                     <BsGift className="mr-2" />
                     Claim Item
                 </Button>

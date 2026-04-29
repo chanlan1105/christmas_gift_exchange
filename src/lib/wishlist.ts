@@ -11,4 +11,4 @@ export interface WishlistItem {
     }[]
 };
 
-export const noLinkProvidedText = "None provided";
+export const noLinkProvidedText = "No link provided";
