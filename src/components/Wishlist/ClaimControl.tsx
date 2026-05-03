@@ -31,8 +31,10 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                 headers: { "Content-Type": "application/json" }
             });
             if (res.ok) {
-                setIsClaiming(false);
-                router.refresh();
+                startTransition(() => {
+                    router.refresh();
+                    setIsClaiming(false);
+                });
             } else {
                 alert("Failed to claim item. You might not be assigned to this person.");
             }
@@ -65,7 +67,7 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                     />
                     <div className="flex gap-2">
                         <Button size="xs" color="green" onClick={handleClaim} disabled={pending} className="flex-1 transition-colors">
-                            {pending && <Spinner size="sm" light />}
+                            {pending && <Spinner size="sm" light className="mr-2" />}
                             Save
                         </Button>
                         <Button size="xs" color="gray" onClick={() => setIsClaiming(false)} disabled={pending} className="flex-1 transition-colors">Cancel</Button>
@@ -90,13 +92,16 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                                 headers: { "Content-Type": "application/json" }
                             });
                             if (res.ok) {
-                                router.refresh();
+                                startTransition(() => {
+                                    setComment("");
+                                    router.refresh();
+                                });
                             } else {
                                 alert("Failed to remove claim.");
                             }
                         });
                     }}>
-                        <BsX className="mr-2 h-6 w-6" />
+                        {pending ? <Spinner size="sm" className="mr-3" light /> : <BsX className="mr-2 h-6 w-6" />}
                         Unclaim
                     </Button>
                 </ButtonGroup>

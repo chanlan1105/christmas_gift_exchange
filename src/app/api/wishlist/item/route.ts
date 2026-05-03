@@ -58,6 +58,16 @@ export async function PUT(req: NextRequest) {
     if (item == null || item == "")
         return new Response(null, { status: 400 });
 
+    // Debug links
+    if (process.env.DEBUG == "true") {
+        console.log(links);
+        console.log(JSON.stringify(sql({
+            item,
+            links: links ? sql.json(links) : null,
+            desc: desc || null
+        })));
+    }
+
     try {
         // Check that the wishlist item actually belongs to the user
         // and update the database

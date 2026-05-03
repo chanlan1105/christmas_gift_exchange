@@ -3,7 +3,6 @@
 import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 import { WishlistContext } from "@/context/WishlistContext";
 import { noLinkProvidedText, WishlistItem } from "@/lib/wishlist";
-import { TableCell, TableRow } from "flowbite-react"
 import { useContext, useTransition } from "react";
 import { BsPencilFill, BsTrashFill } from "react-icons/bs";
 import ClaimControl from "./ClaimControl";
@@ -54,23 +53,32 @@ export default function ItemRow({
             /* Render add/edit controls */
             controls &&
             <div className="flex flex-col sm:flex-row sm:gap-2">
-                <button className="btn btn-square btn-ghost hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Edit item" onClick={() => {
-                    setActiveItem({ id, item, links: [...links, ""], desc });
-                    setShow(true);
-                }}>
+                <button className={`
+                        btn btn-square btn-ghost
+                        hover:bg-gray-100 dark:hover:bg-gray-800
+                        ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
+                        ${deletePending ? "opacity-70" : ""}
+                    `} aria-label="Edit item" disabled={deletePending} onClick={() => {
+                        if (deletePending) return;
+
+                        setActiveItem({ id, item, links: [...links, ""], desc });
+                        setShow(true);
+                    }}
+                >
                     <BsPencilFill />
                 </button>
                 <button className={`
-                    btn btn-square btn-ghost hover:bg-gray-100 dark:hover:bg-gray-800
-                    ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
-                    ${deletePending ? "opacity-70" : ""}
-                `} onClick={() => {
+                        btn btn-square btn-ghost hover:bg-gray-100 dark:hover:bg-gray-800
+                        ${deletePending ? "cursor-not-allowed" : "cursor-pointer"}
+                        ${deletePending ? "opacity-70" : ""}
+                    `} disabled={deletePending} onClick={() => {
                         if (deletePending) return;
 
                         startDeleteTransition(async () => {
                             await deleteItem(id);
                         });
-                    }}>
+                    }}
+                >
                     {deletePending ? <span className="loading loading-spinner"></span> : <BsTrashFill />}
                 </button>
             </div>

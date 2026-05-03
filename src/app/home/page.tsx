@@ -1,6 +1,6 @@
 import Assignments from "@/app/home/Assignments/Assignments";
 import LogoutAlert from "@/app/home/components/LogoutAlert";
-import Wishlist from "@/app/home/Wishlist/Wishlist";
+import WishlistWrapper from "@/app/home/Wishlist/WishlistWrapper";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserFromToken } from "../api/auth/authToken";
@@ -25,6 +25,6 @@ export default async function SplashPage() {
 
         <Assignments />
 
-        <Wishlist />
+        <WishlistWrapper />
     </>;
 }
