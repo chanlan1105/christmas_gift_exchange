@@ -52,6 +52,6 @@ export default function Wishlist(
         return <div className="alert" role="alert"><BsBasket3 />{user}'s wishlist is empty!</div>;
     }
     else {
-        return <WishlistTable initialWishlist={wishlist} controls={false} />;
+        return <WishlistTable staticWishlist={wishlist} controls={false} />;
     }
 }

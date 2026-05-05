@@ -10,6 +10,7 @@
     "generate": "tsx src/db/generateAssignments.ts"
   },
   "dependencies": {
+    "@dnd-kit/react": "^0.4.0",
     "bcrypt": "^6.0.0",
     "cookie": "^1.0.2",
     "flowbite-react": "^0.12.10",

@@ -1,20 +1,16 @@
 "use client";
 
-import { WishlistItem } from "@/lib/wishlist";
 import { Button, Label, Spinner, Textarea, TextInput } from "flowbite-react";
 import { useRouter } from "next/navigation";
-import { Dispatch, FormEvent, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useContext, FormEvent, useCallback, useEffect, useState, useRef, useTransition } from "react";
+import { WishlistContext } from "@/context/WishlistContext";
 
-export default function AddItemModal({
-    show, setShow, values = null
-}: {
-    show: boolean,
-    setShow: Dispatch<SetStateAction<boolean>>,
-    values?: WishlistItem | null
-}) {
+export default function AddItemModal() {
+    const { show, setShow, activeItem } = useContext(WishlistContext)!;
     const [links, setLinks] = useState<string[]>([""]);
-    const [submitting, setSubmitting] = useState(false);
+    const [submitting, startTransition] = useTransition();
     const router = useRouter();
+    const formRef = useRef<HTMLFormElement>(null);
 
     const setLink = useCallback((link: string, index: number) => {
         setLinks(prevLinks => {
@@ -40,44 +36,51 @@ export default function AddItemModal({
 
     const closeModal = useCallback(() => {
         setShow(false);
-        setLinks([""]);
     }, []);
 
     const submitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setSubmitting(true);
-        const formData = new FormData(e.currentTarget);
+        startTransition(async () => {
+            const formData = new FormData(e.currentTarget);
 
-        if (values && values.id != null) {
-            formData.set("id", values.id.toString());
-        }
+            if (activeItem && activeItem.id != null) {
+                formData.set("id", activeItem.id.toString());
+            }
 
-        const res = await fetch("/api/wishlist/item", {
-            method: values && values.id != null ? "PUT" : "POST",
-            body: formData
+            const res = await fetch("/api/wishlist/item", {
+                method: activeItem && activeItem.id != null ? "PUT" : "POST",
+                body: formData
+            });
+
+            if (res.ok) {
+                startTransition(() => {
+                    router.refresh();
+                    closeModal();
+                });
+            }
+            else
+                alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD. HTTP status: " + res.status);
         });
-
-        if (res.ok) {
-            closeModal();
-            router.refresh();
-        }
-        else
-            alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD. HTTP status: " + res.status);
-
-        setSubmitting(false);
-    }, [values]);
+    }, [activeItem]);
 
     useEffect(() => {
-        if (values) {
-            setLinks(values.links);
+        if (activeItem) {
+            setLinks(activeItem.links);
         }
-    }, [show, values]);
+        else {
+            setLinks([""]);
+        }
+
+        if (show) {
+            formRef.current?.reset();
+        }
+    }, [show, activeItem]);
 
     return <dialog className={`modal ${show ? "modal-open" : ""}`}>
         <div className="modal-box font-sans max-w-md bg-white dark:bg-gray-800">
-            <h3 className="text-xl font-medium mb-4 text-gray-900 dark:text-white">{values ? "Edit" : "Add"} an item {values ? "on" : "to"} your wishlist</h3>
-            <form className="space-y-6" onSubmit={e => submitForm(e)} autoComplete="off">
+            <h3 className="text-xl font-medium mb-4 text-gray-900 dark:text-white">{activeItem ? "Edit" : "Add"} an item {activeItem ? "on" : "to"} your wishlist</h3>
+            <form ref={formRef} className="space-y-6" onSubmit={e => submitForm(e)} autoComplete="off">
                 <div>
                     <div className="mb-2">
                         <Label htmlFor="wishlist-add-item">Item</Label>
@@ -86,7 +89,7 @@ export default function AddItemModal({
                         id="wishlist-add-item"
                         name="item"
                         readOnly={submitting}
-                        defaultValue={values?.item}
+                        defaultValue={activeItem?.item ?? ""}
                         required
                     />
                 </div>
@@ -119,14 +122,20 @@ export default function AddItemModal({
                     <div className="mb-2">
                         <Label htmlFor="wishlist-add-comment">Extra comment (optional)</Label>
                     </div>
-                    <Textarea id="wishlist-add-comment" className="min-h-20" name="desc" defaultValue={values?.desc} readOnly={submitting} />
+                    <Textarea
+                        id="wishlist-add-comment"
+                        className="min-h-20"
+                        name="desc"
+                        defaultValue={activeItem?.desc ?? ""}
+                        readOnly={submitting}
+                    />
                 </div>
 
                 <div className="flex gap-2">
                     <Button type="button" color="alternative" onClick={closeModal} disabled={submitting}>Cancel</Button>
                     <Button type="submit" color="green" disabled={submitting}>
                         {
-                            values ? "Update" : "Add"
+                            activeItem ? "Update" : "Add"
                         }
                         {
                             submitting ? <Spinner size="sm" className="ml-2" /> : <></>
@@ -135,8 +144,6 @@ export default function AddItemModal({
                 </div>
             </form>
         </div>
-        <form method="dialog" className="modal-backdrop">
-            <button onClick={closeModal} type="button">close</button>
-        </form>
+        <label className="modal-backdrop" onClick={closeModal} />
     </dialog>;
 }

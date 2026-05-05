@@ -1,32 +1,54 @@
-import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
-import { cookies } from "next/headers";
-import WishlistHeader from "./WishlistHeader";
+"use client";
+
 import WishlistTable from "@/components/Wishlist/WishlistTable";
+import { WishlistContext } from "@/context/WishlistContext";
+import { WishlistItem } from "@/lib/wishlist";
+import WishlistHeader from "./WishlistHeader";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import AddItemModal from "@/components/Wishlist/AddItemModal";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+export default function Wishlist({ wishlistData }: { wishlistData: WishlistItem[] }) {
+    const router = useRouter();
 
-export default async function Wishlist() {
-    const cookieStore = await cookies();
-    const wishlistStore = await fetch(`${BASE_URL}/api/wishlist/fetch`, {
-        method: "POST",
-        headers: {
-            "Cookie": cookieStore.toString(),
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            target: cookieStore.get("user")?.value
-        })
-    });
+    const [show, setShow] = useState(false);
+    const [activeItem, setActiveItem] = useState<null | WishlistItem>(null);
+    const [reordering, setReordering] = useState(false);
+    const [wishlist, setWishlist] = useState<WishlistItem[]>(wishlistData);
 
-    return <>
+    const deleteItem = useCallback(async (id: number) => {
+        if (!confirm("Are you sure you want to delete this item? This cannot be reversed."))
+            return;
+
+        const res = await fetch("/api/wishlist/item", {
+            method: "DELETE",
+            body: JSON.stringify({
+                id
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (res.ok)
+            router.refresh();
+        else
+            alert("There was an error deleting this item. Error code: ERR_WSHLST_DEL. HTTP status: " + res.status);
+    }, []);
+
+    return <WishlistContext.Provider value={{
+        show, setShow,
+        activeItem, setActiveItem,
+        deleteItem,
+        reordering, setReordering,
+        wishlist, setWishlist
+    }}>
         <WishlistHeader />
 
         <div className="overflow-x-auto">
-            {
-                wishlistStore.ok ?
-                    <WishlistTable initialWishlist={await wishlistStore.json()} controls={true} /> :
-                    <ErrorAlert errorCode="ERR_WSHLST_USR" options={{ http: wishlistStore.status }} />
-            }
+            <WishlistTable controls={true} />
         </div>
-    </>;
+
+        <AddItemModal />
+    </WishlistContext.Provider>;
 }
