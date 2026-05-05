@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
             if (assignedUsers.length != 0) {
                 // Fetch target wishlist and claimed items
                 const wishlist = await sql`
-                    SELECT w.*, (
+                    SELECT w.id, w.item, w.links, w."desc", (
                         SELECT json_agg(json_build_object(
                             'user', c.claimed_by,
                             'comment', c.comment
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
                     ) AS claim_data
                     FROM wishlist w
                     WHERE w.person = ${target} AND w."year" = ${YEAR}
-                    ORDER BY w.id ASC;
+                    ORDER BY w.rank, w.id ASC;
                 `;
 
                 return Response.json(wishlist);
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
             WHERE
                 person=${target} AND
                 "year"=${YEAR}
-            ORDER BY id ASC;
+            ORDER BY rank, id ASC;
         `;
 
         return Response.json(wishlist);

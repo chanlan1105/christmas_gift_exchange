@@ -13,6 +13,8 @@ export default function Wishlist({ wishlistData }: { wishlistData: WishlistItem[
 
     const [show, setShow] = useState(false);
     const [activeItem, setActiveItem] = useState<null | WishlistItem>(null);
+    const [reordering, setReordering] = useState(false);
+    const [wishlist, setWishlist] = useState<WishlistItem[]>(wishlistData);
 
     const deleteItem = useCallback(async (id: number) => {
         if (!confirm("Are you sure you want to delete this item? This cannot be reversed."))
@@ -37,12 +39,14 @@ export default function Wishlist({ wishlistData }: { wishlistData: WishlistItem[
     return <WishlistContext.Provider value={{
         show, setShow,
         activeItem, setActiveItem,
-        deleteItem
+        deleteItem,
+        reordering, setReordering,
+        wishlist, setWishlist
     }}>
         <WishlistHeader />
 
         <div className="overflow-x-auto">
-            <WishlistTable initialWishlist={wishlistData} controls={true} />
+            <WishlistTable controls={true} />
         </div>
 
         <AddItemModal />

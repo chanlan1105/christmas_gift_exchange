@@ -7,7 +7,8 @@ await sql`
         person VARCHAR(127),
         item TEXT,
         links JSON,
-        "desc" TEXT
+        "desc" TEXT,
+        rank INTEGER
     );
 `;
 

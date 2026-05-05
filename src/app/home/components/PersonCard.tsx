@@ -97,7 +97,9 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
                         `}>
                             {
                                 wishlist.map((item: WishlistItem) =>
-                                    <ItemRow item={item} controls={false} key={item.id} claimable={true} loggedInUser={loggedIn} />
+                                    <li className="list-row flex" key={item.id}>
+                                        <ItemRow item={item} controls={false} claimable={true} loggedInUser={loggedIn} />
+                                    </li>
                                 )
                             }
                         </ul>
