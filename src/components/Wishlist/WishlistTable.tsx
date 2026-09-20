@@ -8,11 +8,19 @@ import { WishlistContext } from "@/context/WishlistContext";
 import ErrorAlert from "../ErrorAlert/ErrorAlert";
 import { DragDropProvider } from "@dnd-kit/react";
 
+/**
+ * Generates a sortable row for a wishlist item. If controls are enabled, the row will include
+ * the edit/delete control buttons as well as a draggable handle that can be used to reorder.
+ * @param item The wishlist item to render in the row.
+ * @param controls Whether to include edit/delete controls and a draggable handle.
+ * @param index The index of the item in the wishlist, used for sorting.
+ * @returns A sortable row component for the wishlist item.
+ */
 function SortableRow({ item, controls, index }: { item: WishlistItem, controls: boolean, index: number }) {
     const { ref, handleRef } = useSortable({ id: item.id, index });
 
-    return <li ref={ref} className="item list-row flex data-dnd-dragging:shadow-md data-dnd-dragging:bg-base-200/50">
-        <ItemRow item={item} controls={controls} handleRef={handleRef} key={item.id} />
+    return <li ref={controls ? ref : undefined} className="item list-row flex data-dnd-dragging:shadow-md data-dnd-dragging:bg-base-200/50">
+        <ItemRow item={item} controls={controls} handleRef={controls ? handleRef : undefined} key={item.id} />
     </li>
 }
 
