@@ -68,7 +68,11 @@ export default function ClaimControl({ itemId, claimData, loggedInUser }: ClaimC
                     <div className="flex gap-2">
                         <Button size="xs" color="green" onClick={handleClaim} disabled={pending} className="flex-1 transition-colors">
                             {pending && <Spinner size="sm" light className="mr-2" />}
-                            Save
+                            {
+                                claimData?.filter(({ user }) => user == loggedInUser).length ?
+                                    "Save" :
+                                    "Claim"
+                            }
                         </Button>
                         <Button size="xs" color="gray" onClick={() => setIsClaiming(false)} disabled={pending} className="flex-1 transition-colors">Cancel</Button>
                     </div>
