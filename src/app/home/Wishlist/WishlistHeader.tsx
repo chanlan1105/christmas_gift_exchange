@@ -6,21 +6,17 @@ import { WishlistContext } from "@/context/WishlistContext";
 import { useCallback, useContext, useTransition } from "react";
 import ErrorAlert from "@/components/ErrorAlert/ErrorAlert";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
 export default function WishlistHeader() {
     const wishlistContext = useContext(WishlistContext);
-    if (!wishlistContext) {
-        return <ErrorAlert errorCode="ERR_WSHLST_HDR_CXT" />;
-    }
-    const { setShow, setActiveItem, reordering, setReordering, wishlist } = wishlistContext;
-
     const [pending, startTransition] = useTransition();
 
+    const wishlist = wishlistContext?.wishlist;
+
     const reorder = useCallback(() => {
+        if (!wishlist) return Promise.resolve(false);
         return new Promise<boolean>(resolve => {
             startTransition(async () => {
-                const res = await fetch(`${BASE_URL}/api/wishlist/reorder`, {
+                const res = await fetch("/api/wishlist/reorder", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(
@@ -38,6 +34,11 @@ export default function WishlistHeader() {
             })
         });
     }, [wishlist]);
+
+    if (!wishlistContext) {
+        return <ErrorAlert errorCode="ERR_WSHLST_HDR_CXT" />;
+    }
+    const { setShow, setActiveItem, reordering, setReordering } = wishlistContext;
 
     return <>
         <h1 className="text-2xl font-bold mt-10 mb-4 flex items-center gap-3 flex-wrap">

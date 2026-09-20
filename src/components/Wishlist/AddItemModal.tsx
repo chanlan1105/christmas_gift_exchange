@@ -1,15 +1,14 @@
 "use client";
 
 import { Button, Label, Spinner, Textarea, TextInput } from "flowbite-react";
-import { useRouter } from "next/navigation";
 import { useContext, FormEvent, useCallback, useEffect, useState, useRef, useTransition } from "react";
 import { WishlistContext } from "@/context/WishlistContext";
+import { WishlistItem } from "@/lib/wishlist";
 
 export default function AddItemModal() {
-    const { show, setShow, activeItem } = useContext(WishlistContext)!;
+    const { show, setShow, activeItem, setWishlist } = useContext(WishlistContext)!;
     const [links, setLinks] = useState<string[]>([""]);
     const [submitting, startTransition] = useTransition();
-    const router = useRouter();
     const formRef = useRef<HTMLFormElement>(null);
 
     const setLink = useCallback((link: string, index: number) => {
@@ -36,46 +35,48 @@ export default function AddItemModal() {
 
     const closeModal = useCallback(() => {
         setShow(false);
-    }, []);
+    }, [setShow]);
 
     const submitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+
+        if (activeItem && activeItem.id != null) {
+            formData.set("id", activeItem.id.toString());
+        }
 
         startTransition(async () => {
-            const formData = new FormData(e.currentTarget);
-
-            if (activeItem && activeItem.id != null) {
-                formData.set("id", activeItem.id.toString());
-            }
-
             const res = await fetch("/api/wishlist/item", {
                 method: activeItem && activeItem.id != null ? "PUT" : "POST",
                 body: formData
             });
 
             if (res.ok) {
-                startTransition(() => {
-                    router.refresh();
-                    closeModal();
-                });
+                const item: WishlistItem = await res.json();
+                if (activeItem && activeItem.id != null) {
+                    setWishlist(prev => prev.map(i => i.id === item.id ? item : i));
+                } else {
+                    setWishlist(prev => [...prev, item]);
+                }
+                closeModal();
             }
-            else
+            else {
                 alert("There was an issue adding the item to your wishlist. Please contact me. Error code: ERR_WSHLST_ADD. HTTP status: " + res.status);
+            }
         });
-    }, [activeItem]);
+    }, [activeItem, closeModal, setWishlist]);
+
+    const [prevItem, setPrevItem] = useState(activeItem);
+    if (activeItem !== prevItem) {
+        setPrevItem(activeItem);
+        setLinks(activeItem ? activeItem.links : [""]);
+    }
 
     useEffect(() => {
-        if (activeItem) {
-            setLinks(activeItem.links);
-        }
-        else {
-            setLinks([""]);
-        }
-
         if (show) {
             formRef.current?.reset();
         }
-    }, [show, activeItem]);
+    }, [show]);
 
     return <dialog className={`modal ${show ? "modal-open" : ""}`}>
         <div className="modal-box font-sans max-w-md bg-white dark:bg-gray-800">

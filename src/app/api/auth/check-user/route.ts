@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
         return Response.json(!!userData[0].password);
     }
     catch (err) {
+        console.error(err);
         return new Response(null, { status: 500 });
     }
 }

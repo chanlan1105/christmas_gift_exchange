@@ -20,21 +20,27 @@ export async function POST(req: NextRequest) {
         return new Response(null, { status: 400 });
 
     try {
-        await sql`
+        const [newItem] = await sql`
             INSERT INTO wishlist ${ sql({
                 year: new Date().getFullYear(),
                 person: user,
                 item,
-                links: links ?? null,
+                links: sql.json(links),
                 desc: desc || null
             }) } 
+            RETURNING id, item, links, "desc"
         `;
+
+        return Response.json({
+            ...newItem,
+            links: Array.isArray(newItem.links) ? newItem.links : (newItem.links ? JSON.parse(newItem.links) : []),
+            desc: newItem.desc ?? ""
+        }, { status: 201 });
     }
     catch (err) {
+        console.error(err);
         return new Response(null, { status: 500 });
     }
-
-    return new Response(null, { status: 201 });
 }
 
 export async function PUT(req: NextRequest) {
@@ -58,37 +64,36 @@ export async function PUT(req: NextRequest) {
     if (item == null || item == "")
         return new Response(null, { status: 400 });
 
-    // Debug links
-    if (process.env.DEBUG == "true") {
-        console.log(links);
-        console.log(JSON.stringify(sql({
-            item,
-            links: links ? sql.json(links) : null,
-            desc: desc || null
-        })));
-    }
-
     try {
         // Check that the wishlist item actually belongs to the user
         // and update the database
-        const result = await sql`
+        const [updatedItem] = await sql`
             UPDATE wishlist
             SET ${
-                sql({ item, links, desc })
+                sql({
+                    item,
+                    links: sql.json(links),
+                    desc: desc || null
+                })
             }
             WHERE
                 person=${user} AND
                 id=${id}
             RETURNING
-                id
+                id, item, links, "desc"
         `;
 
-        if (!result)
+        if (!updatedItem)
             return new Response(null, { status: 403 });
-        else
-            return new Response(null, { status: 201 });
+
+        return Response.json({
+            ...updatedItem,
+            links: Array.isArray(updatedItem.links) ? updatedItem.links : (updatedItem.links ? JSON.parse(updatedItem.links) : []),
+            desc: updatedItem.desc ?? ""
+        }, { status: 200 });
     }
     catch (err) {
+        console.error(err);
         return new Response(null, { status: 500 });
     }
 }
@@ -117,12 +122,13 @@ export async function DELETE(req: NextRequest) {
             RETURNING id
         `;
 
-        if (!result)
+        if (result.length === 0)
             return new Response(null, { status: 403 });
         else
             return new Response(null, { status: 204 });
     }
     catch (err) {
+        console.error(err);
         return new Response(null, { status: 500 });
     }
 }
