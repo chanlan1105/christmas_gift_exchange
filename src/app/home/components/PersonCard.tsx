@@ -47,7 +47,11 @@ export default async function PersonCard({ name, assignees }: { name: Cousin, as
             {name}
         </h5>
         <p className="text-gray-600 dark:text-gray-200 text-sm">
-            {otherAssignees.join(", ")} also {otherAssignees.length == 1 ? "has" : "have"} {name}
+            {
+            otherAssignees.length ?
+                <>{otherAssignees.join(", ")} also {otherAssignees.length == 1 ? "has" : "have"} {name}</> :
+                `No one else has ${name}!`
+            }
         </p>
 
         { /* Mobile view */}

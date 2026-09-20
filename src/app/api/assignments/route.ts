@@ -9,8 +9,14 @@ export async function POST(req: NextRequest) {
     const YEAR = new Date().getFullYear();
     const assignments = await sql`
         SELECT
+            -- Select the gift recipient (i.e., the assignee)
             A.person,
-            ARRAY_AGG(B.assignedto) AS other_gifters
+
+            -- Select all other gifters assigned to the same person, excluding the current user
+            COALESCE(
+                ARRAY_AGG(B.assignedto) FILTER (WHERE B.assignedto!=${user}),
+                ARRAY[]::TEXT[]
+            ) AS other_gifters
         FROM
             assignments AS A
         INNER JOIN 
@@ -20,8 +26,7 @@ export async function POST(req: NextRequest) {
             A.year=B.year
         WHERE
             A.year=${YEAR} AND
-            A.assignedto=${user} AND
-            B.assignedto!=${user}
+            A.assignedto=${user}
         GROUP BY
             A.person;
     `;
