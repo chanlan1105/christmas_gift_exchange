@@ -28,7 +28,7 @@ export default function LoginMenu() {
         {
             (DAY > CHRISTMAS + 1 && !debug) ?
                 <p>Christmas {YEAR} has already passed. Check back next year!</p> :
-                (MONTH >= 11 || debug) ?
+                (MONTH >= 9 || debug) ?
                     <>
                         <p className="mb-3">Please select your name to log in (don't cheat, or that defeats the purpose!):</p>
                         <LoginOptions />
@@ -36,7 +36,7 @@ export default function LoginMenu() {
                         <p className="mt-10 mb-3">Alternatively, log in as a guest to view wishlists in read-only mode:</p>
                         <Button href="/guest" className="w-fit">Log in as guest <BsArrowRight className="ml-3" /> </Button>
                     </> :
-                    <p>Check back in November for details on Christmas {YEAR}.</p>
+                    <p>Check back in September for details on Christmas {YEAR}.</p>
         }
     </>;
 }
